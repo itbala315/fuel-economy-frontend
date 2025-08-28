@@ -1,368 +1,352 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Search, 
-  Filter, 
-  SortAsc, 
-  SortDesc, 
-  Grid3X3, 
-  List,
-  Heart,
-  Star,
+  BarChart3,
+  PieChart,
+  TrendingUp,
   Fuel,
   Calendar,
-  ChevronDown,
-  ChevronRight
+  Globe,
+  Award,
+  ArrowRight,
+  Database
 } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { 
-  setSearch, 
-  setYearRange, 
-  setSorting, 
-  resetFilters 
-} from '../store/filtersSlice';
-import { addFavorite, removeFavorite } from '../store/favoritesSlice';
-import { useGetCarsQuery } from '../services/api';
+import { useGetCarsQuery, useGetStatisticsQuery } from '../services/api';
+import { useAppDispatch } from '../hooks/redux';
+import { resetFilters, setSearch, setOrigin } from '../store/filtersSlice';
 
 const Dashboard: React.FC = () => {
-  const dispatch = useDispatch();
-  const filters = useSelector((state: RootState) => state.filters);
-  const favorites = useSelector((state: RootState) => state.favorites);
-  
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { data: cars, isLoading: carsLoading } = useGetCarsQuery({ limit: 1000 });
+  const { data: stats, isLoading: statsLoading } = useGetStatisticsQuery();
 
-  // Get data with current filters
-  const { data, isLoading, error } = useGetCarsQuery({
-    search: filters.search,
-    minYear: filters.minYear,
-    maxYear: filters.maxYear,
-    sortBy: filters.sortBy,
-    sortOrder: filters.sortOrder,
-    limit: 1000 // Get all for client-side pagination
-  });
-
-  // Client-side pagination
-  const paginatedData = useMemo(() => {
-    if (!data?.data || !Array.isArray(data.data)) return { cars: [], totalPages: 0 };
+  const getEfficiencyStats = () => {
+    if (!cars?.data) return { excellent: 0, good: 0, fair: 0, poor: 0 };
     
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const cars = data.data.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(data.data.length / itemsPerPage);
+    const counts = cars.data.reduce((acc, car) => {
+      if (car.mpg >= 30) acc.excellent++;
+      else if (car.mpg >= 25) acc.good++;
+      else if (car.mpg >= 20) acc.fair++;
+      else acc.poor++;
+      return acc;
+    }, { excellent: 0, good: 0, fair: 0, poor: 0 });
     
-    return { cars, totalPages };
-  }, [data?.data, currentPage, itemsPerPage]);
-
-  const handleFavoriteToggle = (car: any) => {
-    if (favorites.items.some(fav => fav.id === car.id)) {
-      dispatch(removeFavorite(car.id));
-    } else {
-      dispatch(addFavorite({
-        name: `${car.make} ${car.model}`,
-        year: car.year,
-        mpg: car.mpg,
-        addedAt: Date.now()
-      }));
-    }
+    return counts;
   };
 
-  const isFavorite = (carId: string) => {
-    return favorites.items.some(fav => fav.id === carId);
+  const getTopPerformers = () => {
+    if (!cars?.data) return [];
+    return [...cars.data]  // Create a copy of the array first
+      .sort((a, b) => b.mpg - a.mpg)
+      .slice(0, 5);
   };
 
-  const resetAllFilters = () => {
+  const getOriginStats = () => {
+    if (!cars?.data) return { usa: 0, europe: 0, japan: 0 };
+    
+    return cars.data.reduce((acc, car) => {
+      if (car.origin === 1) acc.usa++;
+      else if (car.origin === 2) acc.europe++;
+      else if (car.origin === 3) acc.japan++;
+      return acc;
+    }, { usa: 0, europe: 0, japan: 0 });
+  };
+
+  const efficiencyStats = getEfficiencyStats();
+  const topPerformers = getTopPerformers();
+  const originStats = getOriginStats();
+
+  // Navigation handlers for filtering
+  const handleEfficiencyFilter = (efficiency: string) => {
     dispatch(resetFilters());
-    setCurrentPage(1);
+    dispatch(setSearch(efficiency));
+    navigate('/browse');
   };
 
-  if (error) {
+  const handleOriginFilter = (originCode: number) => {
+    dispatch(resetFilters());
+    dispatch(setOrigin(originCode));
+    navigate('/browse');
+  };
+
+  if (carsLoading || statsLoading) {
     return (
-      <div className="text-center py-12">
-        <div className="text-red-500 text-lg">Error loading data</div>
+      <div className="flex items-center justify-center min-h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
           <p className="text-gray-600">
-            {isLoading ? 'Loading...' : `${data?.pagination?.total || 0} vehicles found`}
+            Overview of fuel economy data and performance insights
           </p>
         </div>
-        
-        <div className="flex items-center space-x-4 mt-4 md:mt-0">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-            {showFilters ? <ChevronDown className="h-4 w-4 ml-2" /> : <ChevronRight className="h-4 w-4 ml-2" />}
-          </button>
-          
-          <div className="flex border rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                <Database className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Total Vehicles</h3>
+            <p className="text-3xl font-bold text-blue-600">{stats?.totalCars.toLocaleString() || cars?.data?.length || 0}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                <Fuel className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Average MPG</h3>
+            <p className="text-3xl font-bold text-green-600">{parseFloat(stats?.avgMpg || '0').toFixed(1)}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                <Calendar className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Year Range</h3>
+            <p className="text-3xl font-bold text-purple-600">
+              {stats?.yearRange?.min || 0}-{stats?.yearRange?.max || 0}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                <Award className="h-6 w-6 text-orange-600" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Excellent Rated</h3>
+            <p className="text-3xl font-bold text-orange-600">{efficiencyStats.excellent}</p>
+          </motion.div>
         </div>
-      </div>
 
-      {/* Search Bar */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search by make, model, or year..."
-          value={filters.search}
-          onChange={(e) => dispatch(setSearch(e.target.value))}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        />
-      </div>
-
-      {/* Filters Panel */}
-      {showFilters && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="bg-white border border-gray-200 rounded-lg p-6 mb-6"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
-            <button
-              onClick={resetAllFilters}
-              className="text-sm text-primary-600 hover:text-primary-700"
-            >
-              Reset All
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Year Range
-              </label>
+        {/* Charts and Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Efficiency Distribution */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Efficiency Distribution</h3>
               <div className="flex items-center space-x-2">
-                <input
-                  type="number"
-                  min="1970"
-                  max="2025"
-                  value={filters.minYear || ''}
-                  onChange={(e) => dispatch(setYearRange({ 
-                    min: e.target.value ? parseInt(e.target.value) : null, 
-                    max: filters.maxYear 
-                  }))}
-                  className="w-20 border border-gray-300 rounded px-2 py-1 text-sm"
-                  placeholder="Min"
-                />
-                <span className="text-gray-500">to</span>
-                <input
-                  type="number"
-                  min="1970"
-                  max="2025"
-                  value={filters.maxYear || ''}
-                  onChange={(e) => dispatch(setYearRange({ 
-                    min: filters.minYear, 
-                    max: e.target.value ? parseInt(e.target.value) : null
-                  }))}
-                  className="w-20 border border-gray-300 rounded px-2 py-1 text-sm"
-                  placeholder="Max"
-                />
+                <span className="text-xs text-gray-500">Click to filter</span>
+                <PieChart className="h-5 w-5 text-gray-400" />
               </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sort By
-              </label>
-              <div className="flex space-x-2">
-                <select
-                  value={filters.sortBy}
-                  onChange={(e) => dispatch(setSorting({ 
-                    sortBy: e.target.value, 
-                    sortOrder: filters.sortOrder 
-                  }))}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="year">Year</option>
-                  <option value="mpg">MPG</option>
-                  <option value="make">Make</option>
-                </select>
-                <button
-                  onClick={() => dispatch(setSorting({ 
-                    sortBy: filters.sortBy, 
-                    sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' 
-                  }))}
-                  className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  {filters.sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Results */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded"></div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <>
-          <div className={`grid gap-6 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-1'
-          }`}>
-            {paginatedData.cars.map((car: any, index: number) => (
-              <motion.div
-                key={car.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                className={`bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow ${
-                  viewMode === 'list' ? 'flex items-center p-4' : 'p-6'
-                }`}
+            <div className="space-y-4">
+              <button
+                onClick={() => handleEfficiencyFilter('excellent')}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
               >
-                {viewMode === 'grid' ? (
-                  <>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-2">
-                        <Fuel className="h-5 w-5 text-primary-600" />
-                        <span className="font-semibold text-lg text-primary-600">
-                          {car.mpg} MPG
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleFavoriteToggle(car)}
-                        className={`p-1 rounded-full transition-colors ${
-                          isFavorite(car.id) 
-                            ? 'text-red-500 hover:text-red-600' 
-                            : 'text-gray-400 hover:text-red-500'
-                        }`}
-                      >
-                        <Heart className={`h-5 w-5 ${isFavorite(car.id) ? 'fill-current' : ''}`} />
-                      </button>
-                    </div>
-                    
-                    <h3 className="font-bold text-gray-900 mb-2">
-                      {car.make} {car.model}
-                    </h3>
-                    
-                    <div className="flex items-center text-sm text-gray-600 mb-4">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {car.year}
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
-                        {car.cylinders} cyl • {car.displacement}L
-                      </span>
-                      <Star className="h-4 w-4 text-yellow-400" />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2">
-                          <Fuel className="h-5 w-5 text-primary-600" />
-                          <span className="font-semibold text-lg text-primary-600">
-                            {car.mpg} MPG
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-gray-900">
-                          {car.make} {car.model}
-                        </h3>
-                        <span className="text-gray-600">{car.year}</span>
-                        <span className="text-sm text-gray-500">
-                          {car.cylinders} cyl • {car.displacement}L
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleFavoriteToggle(car)}
-                      className={`p-2 rounded-full transition-colors ${
-                        isFavorite(car.id) 
-                          ? 'text-red-500 hover:text-red-600' 
-                          : 'text-gray-400 hover:text-red-500'
-                      }`}
-                    >
-                      <Heart className={`h-5 w-5 ${isFavorite(car.id) ? 'fill-current' : ''}`} />
-                    </button>
-                  </>
-                )}
-              </motion.div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Excellent (30+ MPG)</span>
+                </div>
+                <span className="text-lg font-bold text-green-600">{efficiencyStats.excellent}</span>
+              </button>
+              <button
+                onClick={() => handleEfficiencyFilter('good')}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Good (25-29 MPG)</span>
+                </div>
+                <span className="text-lg font-bold text-blue-600">{efficiencyStats.good}</span>
+              </button>
+              <button
+                onClick={() => handleEfficiencyFilter('fair')}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Fair (20-24 MPG)</span>
+                </div>
+                <span className="text-lg font-bold text-yellow-600">{efficiencyStats.fair}</span>
+              </button>
+              <button
+                onClick={() => handleEfficiencyFilter('poor')}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Poor (&lt;20 MPG)</span>
+                </div>
+                <span className="text-lg font-bold text-red-600">{efficiencyStats.poor}</span>
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Origin Distribution */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Origin Distribution</h3>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500">Click to filter</span>
+                <Globe className="h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <button
+                onClick={() => handleOriginFilter(1)}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">🇺🇸</span>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">United States</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900">{originStats.usa}</span>
+              </button>
+              <button
+                onClick={() => handleOriginFilter(2)}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">🇪🇺</span>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Europe</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900">{originStats.europe}</span>
+              </button>
+              <button
+                onClick={() => handleOriginFilter(3)}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">🇯🇵</span>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-600">Japan</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900">{originStats.japan}</span>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Top Performers */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Top 5 Most Efficient Vehicles</h3>
+            <TrendingUp className="h-5 w-5 text-gray-400" />
+          </div>
+          <div className="space-y-3">
+            {topPerformers.map((car, index) => (
+              <Link
+                key={car.id}
+                to={`/car/${car.id}`}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-center w-8 h-8 bg-primary-100 rounded-full group-hover:bg-primary-200 transition-colors">
+                    <span className="text-sm font-bold text-primary-600">#{index + 1}</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">{car.carName}</p>
+                    <p className="text-sm text-gray-600">{car.modelYear}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Fuel className="h-4 w-4 text-green-600" />
+                  <span className="text-lg font-bold text-green-600">{car.mpg} MPG</span>
+                  <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                </div>
+              </Link>
             ))}
           </div>
+        </motion.div>
 
-          {/* Pagination */}
-          {paginatedData.totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-2 mt-8">
-              <button
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              
-              <div className="flex space-x-1">
-                {Array.from({ length: Math.min(5, paginatedData.totalPages) }, (_, i) => {
-                  const page = i + 1;
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-2 rounded-lg ${
-                        page === currentPage 
-                          ? 'bg-primary-600 text-white' 
-                          : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white"
+        >
+          <h3 className="text-xl font-semibold mb-4">Explore More</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              to="/browse"
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+            >
+              <div>
+                <p className="font-medium">Browse Vehicles</p>
+                <p className="text-sm text-primary-100">Search and filter vehicles</p>
               </div>
-              
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === paginatedData.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              to="/visualizations"
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+            >
+              <div>
+                <p className="font-medium">View Charts</p>
+                <p className="text-sm text-primary-100">Interactive visualizations</p>
+              </div>
+              <BarChart3 className="h-5 w-5" />
+            </Link>
+            <Link
+              to="/favorites"
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+            >
+              <div>
+                <p className="font-medium">My Favorites</p>
+                <p className="text-sm text-primary-100">Saved vehicles</p>
+              </div>
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

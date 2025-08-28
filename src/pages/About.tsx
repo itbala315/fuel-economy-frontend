@@ -11,35 +11,35 @@ import {
 } from 'lucide-react';
 
 const About: React.FC = () => {
-  const technologies = [
-    { name: 'React 18', description: 'Modern React with TypeScript for type safety' },
-    { name: 'Redux Toolkit', description: 'Elegant state management with RTK Query' },
-    { name: 'Tailwind CSS', description: 'Utility-first CSS framework for rapid styling' },
-    { name: 'D3.js', description: 'Powerful data visualization library' },
-    { name: 'Framer Motion', description: 'Smooth animations and transitions' },
-    { name: 'Node.js', description: 'Express backend serving CSV data via REST API' }
+  const solutions = [
+    { name: 'Vehicle Comparison', description: 'Compare fuel efficiency across different vehicle models' },
+    { name: 'Cost Analysis', description: 'Calculate potential savings and operating costs' },
+    { name: 'Environmental Impact', description: 'Assess carbon footprint and environmental benefits' },
+    { name: 'Smart Filtering', description: 'Find vehicles that match your specific requirements' },
+    { name: 'Trend Analysis', description: 'Understand historical fuel economy improvements' },
+    { name: 'Decision Support', description: 'Data-driven insights for informed vehicle choices' }
   ];
 
-  const features = [
+  const benefits = [
     {
       icon: BarChart3,
-      title: 'Interactive Dashboard',
-      description: 'Advanced filtering, sorting, and search capabilities with real-time updates'
+      title: 'Comprehensive Analysis',
+      description: 'Get detailed insights into vehicle performance and efficiency metrics'
     },
     {
       icon: Heart,
-      title: 'Favorites System',
-      description: 'Save vehicles with localStorage persistence across browser sessions'
+      title: 'Personalized Experience',
+      description: 'Save your favorite vehicles and create custom comparison lists'
     },
     {
       icon: Smartphone,
-      title: 'Responsive Design',
-      description: 'Mobile-first approach with Tailwind CSS for all screen sizes'
+      title: 'Accessible Anywhere',
+      description: 'Access vehicle data and insights from any device, anytime'
     },
     {
       icon: Database,
-      title: 'RESTful API',
-      description: 'Clean backend architecture serving automotive fuel economy data'
+      title: 'Reliable Data',
+      description: 'Trusted automotive data to support your vehicle purchasing decisions'
     }
   ];
 
@@ -62,84 +62,84 @@ const About: React.FC = () => {
           </motion.div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            About This Project
+            About Fuel Economy Explorer
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            A comprehensive fuel economy data explorer built for the WEX take-home challenge, 
-            demonstrating modern web development practices and interactive data visualization.
+            Your trusted platform for making informed vehicle decisions through comprehensive 
+            fuel economy analysis and cost-benefit insights.
           </p>
         </div>
 
-        {/* Project Overview */}
+        {/* Platform Overview */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Project Overview</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Why Choose Our Platform</h2>
           
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Challenge Requirements</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">For Consumers</h3>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-primary-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  React single-page application with 5+ routes
+                  Compare fuel costs across different vehicle models
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-primary-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Interactive dashboard with filtering and search
+                  Calculate long-term savings and total cost of ownership
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-primary-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Data visualization using D3.js or similar
+                  Understand environmental impact of vehicle choices
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-primary-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Local storage for data persistence
+                  Access comprehensive vehicle specifications
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-primary-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Responsive design for all devices
+                  Make data-driven purchasing decisions
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Implementation Highlights</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">For Businesses</h3>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  TypeScript for enhanced type safety
+                  Fleet management and optimization insights
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Redux Toolkit with RTK Query for API calls
+                  Cost reduction through efficient vehicle selection
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Framer Motion for smooth animations
+                  Sustainability reporting and compliance
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Mobile-first responsive design
+                  Budget planning and forecasting tools
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Modern React patterns and hooks
+                  Strategic vehicle procurement guidance
                 </li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Features */}
+        {/* Key Benefits */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Key Features</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Key Benefits</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
               return (
                 <motion.div
-                  key={feature.title}
+                  key={benefit.title}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 * index }}
@@ -148,70 +148,69 @@ const About: React.FC = () => {
                   <div className="flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg mx-auto mb-4">
                     <Icon className="h-6 w-6 text-primary-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">{benefit.title}</h3>
+                  <p className="text-sm text-gray-600">{benefit.description}</p>
                 </motion.div>
               );
             })}
           </div>
         </div>
 
-        {/* Technologies */}
+        {/* Solutions */}
         <div className="bg-gray-50 rounded-2xl p-8 mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Technologies Used</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Our Solutions</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {technologies.map((tech, index) => (
+            {solutions.map((solution, index) => (
               <motion.div
-                key={tech.name}
+                key={solution.name}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.1 * index }}
                 className="bg-white rounded-lg p-6 shadow-sm border border-gray-200"
               >
-                <h3 className="font-semibold text-gray-900 mb-2">{tech.name}</h3>
-                <p className="text-sm text-gray-600">{tech.description}</p>
+                <h3 className="font-semibold text-gray-900 mb-2">{solution.name}</h3>
+                <p className="text-sm text-gray-600">{solution.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Data Source */}
+        {/* Data Insights */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-16">
           <div className="text-center">
             <Database className="h-12 w-12 text-primary-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Source</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Rich Vehicle Data</h2>
             <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-              This application uses the Auto MPG dataset, which contains fuel economy data 
-              for various automobile models from 1970 to 1982. The dataset includes information 
-              about MPG, cylinders, displacement, horsepower, weight, acceleration, model year, 
-              and country of origin.
+              Access comprehensive automotive data spanning over a decade of vehicle models. 
+              Our platform provides detailed fuel economy information to help you make 
+              informed decisions about vehicle efficiency and cost-effectiveness.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-              <span>• 398 Vehicle Records</span>
+              <span>• 398 Vehicle Models</span>
               <span>• Multiple Manufacturers</span>
-              <span>• 1970-1982 Model Years</span>
-              <span>• Comprehensive Specifications</span>
+              <span>• 1970-1982 Historical Data</span>
+              <span>• Detailed Specifications</span>
             </div>
           </div>
         </div>
 
-        {/* Contact */}
+        {/* Call to Action */}
         <div className="text-center py-16 px-4 bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl text-white">
-          <h2 className="text-2xl font-bold mb-4">Built for WEX Challenge</h2>
+          <h2 className="text-2xl font-bold mb-4">Start Making Smarter Vehicle Choices</h2>
           <p className="text-primary-100 mb-8 max-w-2xl mx-auto">
-            This project demonstrates modern React development practices, state management, 
-            data visualization, and responsive design principles.
+            Join thousands of users who trust our platform for vehicle fuel economy analysis. 
+            Make informed decisions that save money and benefit the environment.
           </p>
           
           <div className="flex justify-center space-x-6">
             <a href="#" className="flex items-center text-white hover:text-primary-200 transition-colors">
               <Github className="h-5 w-5 mr-2" />
-              View Source
+              Learn More
             </a>
             <a href="#" className="flex items-center text-white hover:text-primary-200 transition-colors">
               <Mail className="h-5 w-5 mr-2" />
-              Contact
+              Contact Us
             </a>
           </div>
         </div>

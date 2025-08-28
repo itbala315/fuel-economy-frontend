@@ -8,8 +8,25 @@ interface FavoritesState {
 const loadFavoritesFromStorage = (): FavoriteItem[] => {
   try {
     const saved = localStorage.getItem('fuel-economy-favorites');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
+    if (!saved) return [];
+    
+    const parsed = JSON.parse(saved);
+    // Validate the data structure
+    if (!Array.isArray(parsed)) return [];
+    
+    // Filter out any invalid favorites
+    const validFavorites = parsed.filter((item: any) => 
+      item &&
+      typeof item.id === 'string' &&
+      typeof item.name === 'string' &&
+      typeof item.year === 'number' &&
+      typeof item.mpg === 'number' &&
+      typeof item.addedAt === 'number'
+    );
+    
+    return validFavorites;
+  } catch (error) {
+    console.error('Failed to load favorites from localStorage:', error);
     return [];
   }
 };
@@ -48,6 +65,13 @@ const favoritesSlice = createSlice({
     },
     toggleFavorite: (state, action: PayloadAction<Car>) => {
       const car = action.payload;
+      
+      // Validate car data
+      if (!car || !car.id || !car.carName || !car.modelYear || typeof car.mpg !== 'number') {
+        console.error('Invalid car data for favorite toggle:', car);
+        return;
+      }
+      
       const existingIndex = state.items.findIndex(
         item => item.id === car.id.toString()
       );
@@ -74,5 +98,10 @@ const favoritesSlice = createSlice({
 export const { addFavorite, removeFavorite, clearFavorites, toggleFavorite } = favoritesSlice.actions;
 
 export const selectFavorites = (state: { favorites: FavoritesState }) => state.favorites.items;
+
+// Helper function to check if a car is favorited
+export const selectIsFavorite = (state: { favorites: FavoritesState }, carId: string | number) => {
+  return state.favorites.items.some(item => item.id === carId.toString());
+};
 
 export default favoritesSlice.reducer;

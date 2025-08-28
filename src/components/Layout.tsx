@@ -227,8 +227,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="font-bold text-gray-900">Fuel Economy Explorer</span>
               </div>
               <p className="text-sm text-gray-600">
-                Interactive data exploration tool for automotive fuel economy analysis.
-                Built with React, D3.js, and modern web technologies.
+                Comprehensive fuel economy analysis platform helping you make informed decisions 
+                about vehicle efficiency and environmental impact.
               </p>
             </div>
             
@@ -249,20 +249,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             
             <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Features</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Key Benefits</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Interactive Dashboard with Filtering</li>
-                <li>• D3.js Data Visualizations</li>
-                <li>• Local Storage Persistence</li>
-                <li>• Responsive Design</li>
-                <li>• Redux State Management</li>
+                <li>• Compare Vehicle Fuel Efficiency</li>
+                <li>• Analyze Cost Savings</li>
+                <li>• Environmental Impact Assessment</li>
+                <li>• Historical Trend Analysis</li>
+                <li>• Smart Filtering & Search</li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-200 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-gray-500">
-              © 2025 Fuel Economy Explorer. Built for WEX Challenge.
+              © 2025 Fuel Economy Explorer. Empowering smart vehicle choices.
             </p>
             <div className="flex space-x-4 mt-4 sm:mt-0">
               <a href="#" className="text-gray-400 hover:text-gray-600">

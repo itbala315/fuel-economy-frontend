@@ -29,7 +29,7 @@ const Home: React.FC = () => {
     {
       icon: PieChart,
       title: 'Data Visualizations',
-      description: 'Beautiful D3.js charts and graphs to understand fuel economy trends.',
+      description: 'Beautiful interactive charts and graphs to understand fuel economy trends.',
       link: '/visualizations',
       color: 'bg-gray-800'
     },
@@ -62,10 +62,10 @@ const Home: React.FC = () => {
       value: `${stats?.yearRange?.min || 0}-${stats?.yearRange?.max || 0}`
     },
     {
-      icon: Eye,
-      title: 'Interactive UI',
-      description: 'Modern, responsive design with smooth animations',
-      value: 'Responsive'
+      icon: Zap,
+      title: 'Cost Savings',
+      description: 'Make informed decisions to optimize fuel efficiency and reduce operational costs',
+      value: 'ROI Focused'
     }
   ];
 

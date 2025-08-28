@@ -125,7 +125,7 @@ const Login: React.FC<LoginProps> = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -134,7 +134,7 @@ const Login: React.FC<LoginProps> = () => {
       >
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           {/* Header */}
-          <div className="bg-primary-600 text-white p-8 text-center">
+          <div className="bg-black text-white p-8 text-center">
             <div className="flex justify-center mb-4">
               <div className="bg-white bg-opacity-20 p-3 rounded-full">
                 <Fuel className="h-8 w-8" />
@@ -143,7 +143,7 @@ const Login: React.FC<LoginProps> = () => {
             <h1 className="text-2xl font-bold mb-2">
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h1>
-            <p className="text-primary-100">
+            <p className="text-gray-300">
               {isLogin 
                 ? 'Sign in to access your fuel economy dashboard' 
                 : 'Join us to track and analyze vehicle fuel efficiency'
@@ -176,7 +176,7 @@ const Login: React.FC<LoginProps> = () => {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                           errors.firstName ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="John"
@@ -199,7 +199,7 @@ const Login: React.FC<LoginProps> = () => {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                           errors.lastName ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="Doe"
@@ -225,7 +225,7 @@ const Login: React.FC<LoginProps> = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="john@example.com"
@@ -249,7 +249,7 @@ const Login: React.FC<LoginProps> = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                       errors.password ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="••••••••"
@@ -285,7 +285,7 @@ const Login: React.FC<LoginProps> = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                         errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="••••••••"
@@ -301,7 +301,7 @@ const Login: React.FC<LoginProps> = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -324,7 +324,7 @@ const Login: React.FC<LoginProps> = () => {
                 {isLogin ? "Don't have an account?" : "Already have an account?"}
                 <button
                   onClick={switchMode}
-                  className="ml-2 text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                  className="ml-2 text-black hover:text-gray-700 font-medium transition-colors"
                 >
                   {isLogin ? 'Sign up' : 'Sign in'}
                 </button>
@@ -332,8 +332,8 @@ const Login: React.FC<LoginProps> = () => {
             </div>
 
             {/* Demo Note */}
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
+            <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p className="text-sm text-gray-800">
                 <strong>Demo Mode:</strong> This is a demonstration login. Any email/password combination will work for testing purposes.
               </p>
             </div>

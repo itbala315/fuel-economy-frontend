@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import AuthRedirect from './components/AuthRedirect';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,21 +21,22 @@ import Login from './pages/Login';
 function App() {
   return (
     <Provider store={store}>
-      <AuthProvider>
-        <Router>
-          <AuthRedirect>
-            <Routes>
-              {/* Public route - Login page without Layout */}
-              <Route path="/login" element={<Login />} />
-              
-              {/* Protected routes with Layout */}
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Home />
-                  </Layout>
-                </ProtectedRoute>
-              } />
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <AuthRedirect>
+              <Routes>
+                {/* Public route - Login page without Layout */}
+                <Route path="/login" element={<Login />} />
+                
+                {/* Protected routes with Layout */}
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Home />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
               
               <Route path="/dashboard" element={
                 <ProtectedRoute>
@@ -87,6 +89,7 @@ function App() {
           </AuthRedirect>
         </Router>
       </AuthProvider>
+    </ThemeProvider>
     </Provider>
   );
 }

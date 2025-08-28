@@ -24,21 +24,21 @@ const Home: React.FC = () => {
       title: 'Interactive Dashboard',
       description: 'Explore automotive data with advanced filtering and real-time search capabilities.',
       link: '/dashboard',
-      color: 'bg-blue-500'
+      color: 'bg-black'
     },
     {
       icon: PieChart,
       title: 'Data Visualizations',
       description: 'Beautiful D3.js charts and graphs to understand fuel economy trends.',
       link: '/visualizations',
-      color: 'bg-green-500'
+      color: 'bg-gray-800'
     },
     {
       icon: Heart,
       title: 'Favorites System',
       description: 'Save and manage your favorite vehicles with local storage persistence.',
       link: '/favorites',
-      color: 'bg-red-500'
+      color: 'bg-gray-600'
     }
   ];
 
@@ -82,23 +82,22 @@ const Home: React.FC = () => {
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="inline-flex items-center justify-center w-20 h-20 bg-primary-600 rounded-full mb-8"
+          className="inline-flex items-center justify-center w-20 h-20 bg-black rounded-full mb-8"
         >
           <Zap className="h-10 w-10 text-white" />
         </motion.div>
         
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+        <h1 className="text-4xl md:text-6xl font-bold text-black mb-6">
           Fuel Economy
         </h1>
-        
-    
+            
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/dashboard">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors shadow-lg"
             >
               Explore Dashboard
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -109,7 +108,7 @@ const Home: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center px-8 py-3 bg-white text-primary-600 font-semibold rounded-lg border-2 border-primary-600 hover:bg-primary-50 transition-colors"
+              className="inline-flex items-center px-8 py-3 bg-white text-black font-semibold rounded-lg border-2 border-black hover:bg-gray-100 transition-colors"
             >
               View Charts
               <PieChart className="ml-2 h-5 w-5" />

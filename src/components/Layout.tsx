@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import ThemeSelector from './ThemeSelector';
 import { 
   Home, 
   BarChart3, 
@@ -27,6 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
+  const { currentTheme } = useTheme();
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -42,7 +45,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Mobile sidebar overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -57,23 +60,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </AnimatePresence>
 
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-surface shadow-sm border-b border-primary-200 sticky top-0 z-30">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 -ml-2 rounded-md hover:bg-gray-100"
+              className="lg:hidden p-2 -ml-2 rounded-md hover:bg-primary-100 text-primary-50"
             >
               <Menu className="h-5 w-5" />
             </button>
             
             <Link to="/" className="flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
-                <Fuel className="h-6 w-6 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
+                <Fuel className="h-6 w-6 text-surface" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Fuel Economy</h1>
-                <p className="text-xs text-gray-500">Data Explorer</p>
+                <h1 className="text-lg font-bold text-primary-50">Fuel Economy</h1>
+                <p className="text-xs text-primary-200">Data Explorer</p>
               </div>
             </Link>
           </div>
@@ -90,11 +93,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   to={item.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     active 
-                      ? 'bg-primary-50 text-primary-700' 
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-primary-50 text-surface' 
+                      : 'text-primary-200 hover:bg-primary-800 hover:text-primary-50'
                   }`}
                 >
-                  <Icon className={`h-4 w-4 ${active ? 'text-primary-600' : 'text-gray-400'}`} />
+                  <Icon className={`h-4 w-4 ${active ? 'text-surface' : 'text-primary-300'}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -102,7 +105,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500 hidden sm:block">
+            {/* Theme Selector */}
+            <ThemeSelector />
+            
+            <div className="text-sm text-primary-200 hidden sm:block">
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'short', 
                 month: 'short', 
@@ -114,20 +120,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 <div className="hidden md:block text-sm">
-                  <div className="text-gray-900 font-medium">
+                  <div className="text-primary-50 font-medium">
                     {user?.firstName} {user?.lastName}
                   </div>
-                  <div className="text-gray-500 text-xs">
+                  <div className="text-primary-200 text-xs">
                     {user?.email}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="bg-primary-100 p-2 rounded-full">
-                    <User className="h-4 w-4 text-primary-600" />
+                  <div className="bg-primary-50 p-2 rounded-full">
+                    <User className="h-4 w-4 text-surface" />
                   </div>
                   <button
                     onClick={logout}
-                    className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-center gap-1 px-3 py-2 text-sm text-primary-200 hover:text-primary-50 hover:bg-primary-800 rounded-lg transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
                     <span className="hidden sm:inline">Logout</span>
@@ -137,7 +143,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-surface rounded-lg hover:bg-primary-100 transition-colors"
               >
                 <LogIn className="h-4 w-4" />
                 <span>Login</span>
@@ -154,19 +160,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           x: isSidebarOpen ? 0 : '-100%',
         }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl lg:hidden"
+        className="fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-xl lg:hidden"
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
+          <div className="flex h-16 items-center justify-between px-6 border-b border-primary-800">
             <div className="flex items-center space-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
-                <Fuel className="h-5 w-5 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+                <Fuel className="h-5 w-5 text-surface" />
               </div>
-              <span className="font-bold text-gray-900">Fuel Economy</span>
+              <span className="font-bold text-primary-50">Fuel Economy</span>
             </div>
             <button
               onClick={() => setIsSidebarOpen(false)}
-              className="p-1 rounded-md hover:bg-gray-100"
+              className="p-1 rounded-md hover:bg-primary-800 text-primary-200 hover:text-primary-50"
             >
               <X className="h-5 w-5" />
             </button>
@@ -184,11 +190,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   onClick={() => setIsSidebarOpen(false)}
                   className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     active 
-                      ? 'bg-primary-50 text-primary-700' 
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-primary-50 text-surface' 
+                      : 'text-primary-200 hover:bg-primary-800 hover:text-primary-50'
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${active ? 'text-primary-600' : 'text-gray-400'}`} />
+                  <Icon className={`h-5 w-5 ${active ? 'text-surface' : 'text-primary-300'}`} />
                   <span>{item.name}</span>
                 </Link>
               );

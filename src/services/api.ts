@@ -1,12 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Car, Statistics, VisualizationData, CylinderData, ApiResponse } from '../types';
 
-const API_BASE_URL = 'https://fuel-economy-backend.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://fuel-economy-backend.onrender.com/api';
 
 export const carsApi = createApi({
   reducerPath: 'carsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+      // Add any necessary headers
+      headers.set('Content-Type', 'application/json');
+      return headers;
+    },
   }),
   tagTypes: ['Car', 'Statistics'],
   endpoints: (builder) => ({

@@ -7,8 +7,8 @@ package-lock.json
 yarn.lock
 
 # Production builds
-frontend/build/
-frontend/dist/
+build/
+dist/
 
 # Environment variables
 .env
@@ -65,3 +65,7 @@ temp/
 # Misc
 *.tsbuildinfo
 .eslintcache
+
+# Separate repositories (deployed independently)
+backend/
+frontend/

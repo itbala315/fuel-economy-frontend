@@ -108,13 +108,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Theme Selector */}
             <ThemeSelector />
             
-            <div className="text-sm text-primary-200 hidden sm:block">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
-            </div>
+        
             
             {/* User Info / Login */}
             {isAuthenticated ? (

@@ -2582,7 +2582,7 @@ const Visualizations: React.FC = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Data Visualizations</h1>
           <p className="text-lg text-gray-600">
-            Interactive charts and graphs powered by D3.js
+            Interactive charts and graphs exploring various aspects of the car dataset
           </p>
           {statistics && (
             <div className="mt-4 text-sm text-gray-500">

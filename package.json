@@ -9,7 +9,6 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/d3": "^7.4.3",
-    "@types/jest": "^27.5.2",
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
@@ -28,8 +27,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "npm run test:coverage",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:5000",
@@ -38,6 +40,33 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/index.tsx",
+      "!src/reportWebVitals.ts",
+      "!src/setupTests.ts",
+      "!src/react-app-env.d.ts",
+      "!src/pages/Visualizations.tsx"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@reduxjs/toolkit|@standard-schema)/)"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 20,
+        "functions": 50,
+        "lines": 50,
+        "statements": 50
+      }
+    }
   },
   "browserslist": {
     "production": [
@@ -52,7 +81,9 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "autoprefixer": "^10.4.21",
+    "msw": "^2.10.5",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.0.0"
   }
